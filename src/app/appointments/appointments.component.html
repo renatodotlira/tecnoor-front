@@ -1,0 +1,118 @@
+<full-calendar #calendar [options]="calendarOptions" *ngIf="isLoaded">
+    <ng-template #eventContent let-arg>
+        <div
+            style="display: flex; width: 100%; padding-left: 3px; color: white; border-radius: 5px;">
+            <div style="display:inline;">
+                <div class="event-text">
+                    <b>{{ arg.event.extendedProps.time }} - {{ arg.event.extendedProps.timeEnd }} </b>{{
+                    arg.event.extendedProps.firstName}}
+                </div>
+                <div class="event-text">
+                    {{ arg.event.extendedProps.service }}
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</full-calendar>
+<div class="modal fade" id="appointmentDetail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detalhes do agendamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table style="width: 100%;">
+                    <tr>
+                        <td class="modal-body-td-left"><b>Cliente:</b></td>
+                        <td class="modal-body-td-right">{{appointmentDetail.client}}</td>
+                    </tr>
+                    <tr>
+                        <td class="modal-body-td-left"><b>Dia:</b></td>
+                        <td class="modal-body-td-right">{{appointmentDetail.day}}</td>
+                    </tr>
+                    <tr>
+                        <td class="modal-body-td-left"><b>Hora:</b></td>
+                        <td class="modal-body-td-right">{{appointmentDetail.hour}}</td>
+                    </tr>
+                    <tr>
+                        <td class="modal-body-td-left"><b>Serviço:</b></td>
+                        <td class="modal-body-td-right">{{appointmentDetail.service}}</td>
+                    </tr>
+                    <tr>
+                        <td class="modal-body-td-left"><b>Valor:</b></td>
+                        <td class="modal-body-td-right">{{appointmentDetail.ammount}}</td>
+                    </tr>
+                    <tr>
+                        <td class="modal-body-td-left"><b>Duração:</b></td>
+                        <td class="modal-body-td-right">{{appointmentDetail.duration}}</td>
+                    </tr>
+                    <tr>
+                        <td class="modal-body-td-left"><b>Profissional:</b></td>
+                        <td class="modal-body-td-right">{{appointmentDetail.employee}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" data-bs-toggle="modal"
+                    data-bs-target="#confirmCancelModal">Cancelar Agendamento</button>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal"
+                    data-bs-target="#rescheduleModal" (click)="openRescheduleModal()">Reagendar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmCancelModal" tabindex="-1" aria-labelledby="confirmCancelModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmCancelModalLabel">Confirmar Cancelamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja cancelar o agendamento?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-danger" (click)="appointmentCancel(appointmentDetail.id)"
+                    data-bs-dismiss="modal">Cancelar Agendamento</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-alert-message *ngIf="showAlert" [message]="successMessage"></app-alert-message>
+
+
+<div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="rescheduleModalLabel">Reagendar Agendamento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="rescheduleError" class="text-danger" style="font-size: 0.9rem; margin-bottom: 10px;">
+            {{ rescheduleError }}
+          </div>
+          <form>
+            <div class="mb-3">
+              <label for="newDate" class="form-label">Nova Data</label>
+              <input type="date" class="form-control" id="newDate" [(ngModel)]="newDate" name="newDate" required>
+            </div>
+            <div class="mb-3">
+              <label for="newTime" class="form-label">Nova Hora</label>
+              <input type="time" class="form-control" id="newTime" [(ngModel)]="newTime" name="newTime" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" (click)="rescheduleAppointment()">Confirmar Reagendamento</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
