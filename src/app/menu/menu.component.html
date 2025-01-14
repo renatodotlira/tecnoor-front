@@ -1,0 +1,26 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="">tecnoor</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    @if (!isLoggedIn) {
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="month" routerLinkActive="active">Agenda</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="employee" >Profissionais</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/contact">Serviços</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/contact">Financeiro</a>
+          </li>
+        </ul>
+      </div>
+    }
+  </div>
+</nav>

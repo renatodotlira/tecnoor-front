@@ -13,18 +13,20 @@ import interactionPlugin from '@fullcalendar/interaction'; // Import necessário
 })
 export class AppointmentsMonthComponent implements OnInit {
   events: any[] = [];
+  month!: number;
   constructor(private appointmentMonthService: AppointmentMonthService, private renderer: Renderer2, private router: Router) { }
   calendarOptions: CalendarOptions = {};
   isLoaded: boolean = false;
 
   ngOnInit() {
     console.log("init..");
+    this.month = new Date().getMonth();
     this.getAppointments();
   }
 
   getAppointments() {
     this.events = [];
-    this.appointmentMonthService.getAppointmentsByMonth().subscribe(
+    this.appointmentMonthService.getAppointmentsByMonth(this.month).subscribe(
       data => {
         this.isLoaded = true;
         data.forEach(app => {

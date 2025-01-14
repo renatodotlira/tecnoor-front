@@ -1,0 +1,40 @@
+.login-container {
+    width: 550px;
+}
+
+.password-show-field {
+    border: 1px solid #dee2e6; 
+    width: 7%; 
+    border-radius: 0px 5px 5px 0px; 
+    background-color: #f8f9fa;
+    text-align: center;
+    padding-top: 15px;
+}
+
+/* Tela pequena (menor que 600px) */
+  @media (max-width: 600px) {
+    .login-container {
+        width: 100%;
+    }
+
+    .password-show-field {
+        border: 1px solid #dee2e6; 
+        width: 10%; 
+        border-radius: 0px 5px 5px 0px; 
+        background-color: #f8f9fa;
+    }
+}
+
+/* Tela muito pequena (menor que 400px) */
+@media (max-width: 400px) {
+    .login-container {
+        width: 100%;
+    }
+
+    .password-show-field {
+        border: 1px solid #dee2e6; 
+        width: 10%; 
+        border-radius: 0px 5px 5px 0px; 
+        background-color: #f8f9fa;
+    }
+}

@@ -10,11 +10,14 @@ import { AppointmentsMonthComponent } from './appointments-month/appointments-mo
 import { AlertMessageComponent } from './alert-message/alert-message.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { LoginComponent } from './auth/login.component';
+import { MenuComponent } from "./menu/menu.component";
+import { EmployeeComponent } from './employee/employee.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AppointmentsComponent,
+    EmployeeComponent,
     AppointmentsMonthComponent,
     AlertMessageComponent,
     LoginComponent,
@@ -25,8 +28,9 @@ import { LoginComponent } from './auth/login.component';
     FullCalendarModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule 
-  ],
+    ReactiveFormsModule,
+    MenuComponent
+],
   providers: [],
   bootstrap: [AppComponent]
 })

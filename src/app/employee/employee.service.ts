@@ -1,7 +1,7 @@
 // src/app/appointment.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Employee } from './employee';
 
 @Injectable({
@@ -16,4 +16,5 @@ export class EmployeeService {
     getEmployeesByBusiness(id: number | string): Observable<Employee[]> {
         return this.http.get<Employee[]>(`${this.apiUrl}/business/${id}`);
       }
+
 }

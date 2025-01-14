@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthResponse } from './authResponse';
-import { environment } from '../environments/environment';
 import { Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -9,7 +8,7 @@ import { Observable, tap } from 'rxjs';
 })
 export class AuthService {
 
-  private apiUrl = environment.authApiUrl;
+  //private apiUrl = environment.authApiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -24,7 +23,7 @@ export class AuthService {
       password: password,
     };
 
-    return this.http.post<AuthResponse>(this.apiUrl, body, { headers }).pipe(
+    return this.http.post<AuthResponse>("", body, { headers }).pipe(
       tap((response) => {
         console.log("Sucesso no login!");
         localStorage.setItem('token', response.token);

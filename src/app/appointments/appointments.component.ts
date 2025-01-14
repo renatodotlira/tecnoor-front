@@ -7,10 +7,10 @@ import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import brLocale from '@fullcalendar/core/locales/pt-br';
 import { AppointmentService } from './appointments.service';
-import { EmployeeService } from './employee.service';
+import { EmployeeService } from '../employee/employee.service';
 import { Modal } from 'bootstrap';
 import { Router } from '@angular/router';
-import { Employee } from './employee';
+import { Employee } from '../employee/employee';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -24,8 +24,8 @@ export class AppointmentsComponent implements OnInit {
   events: any[] = [];
   eventsMonth: any[] = [];
   constructor(
-    private appointmentService: AppointmentService, 
-    private employeeService: EmployeeService, 
+    private appointmentService: AppointmentService,
+    private employeeService: EmployeeService,
     private router: Router
   ) { }
   calendarOptions: CalendarOptions = {};
@@ -37,12 +37,20 @@ export class AppointmentsComponent implements OnInit {
   rescheduleError: string | null = null;
   newDate: string = '';
   newTime: string = '';
+
+  dateTimeStart!: Date;
+  dateTimeEnd!: Date;
+  bookTimeStart: string = '';
+  bookTimeEnd: string = '';
+  employeeId!: number;
+
   modalInstance: any;
   resources: any;
   showMonth: boolean = false;
   selectedDay!: string;
   previousDay!: string;
   nextDay!: string;
+  typeAlert: string = 'success';
 
   async ngOnInit() {
     const navigationState = this.router.getCurrentNavigation()?.extras?.state;
@@ -66,7 +74,7 @@ export class AppointmentsComponent implements OnInit {
     this.appointmentDetail = new AppointmentDetail();
     const employees = await this.getEmployees();
     this.resources = employees;
-    this.getAppointments();    
+    this.getAppointments();
   }
 
   appointmentCancel(id: number | string) {
@@ -96,18 +104,19 @@ export class AppointmentsComponent implements OnInit {
 
     if (newDate && newTime) {
       const newDateTime = `${newDate}T${newTime}`;
-      this.appointmentService.rescheduleAppointment(this.appointmentDetail.id, newDateTime).subscribe(
+      this.appointmentService.rescheduleAppointment(this.appointmentDetail.id, this.appointmentDetail.employeeId.toString(), newDateTime).subscribe(
         () => {
           this.getAppointments();
           this.successMessage = 'Reagendado com sucesso!';
           this.showAlert = true;
           this.getAppointments();
           this.hideAlertAfterDelay();
-          this.hideModal("rescheduleModal");
+          hideModal("rescheduleModal");
           this.rescheduleError = null;
+          this.typeAlert = 'success';
         },
         (error) => {
-          console.error('Erro ao reagendar o agendamento:', error);
+          console.error('Erro ao reagendar:', error);
           if (error.status === 400 && error.error?.code === '01') {
             this.rescheduleError = error.error.message;  // Exibe a mensagem de erro vinda do backend
           } else {
@@ -124,19 +133,17 @@ export class AppointmentsComponent implements OnInit {
   hideAlertAfterDelay() {
     setTimeout(() => {
       this.showAlert = false;
-    }, 4000); 
+    }, 4000);
   }
 
   getAppointments() {
     this.events = [];
-    const { previousDay, nextDay} = getPreviousAndNextDay(this.selectedDay);
+    const { previousDay, nextDay } = getPreviousAndNextDay(this.selectedDay);
     this.previousDay = previousDay;
     this.nextDay = nextDay;
     console.log("ontem: " + previousDay);
     console.log("hoje: " + this.selectedDay);
     console.log("amanhã: " + nextDay);
-
-    const modalElement = document.getElementById('appointmentDetail');
 
     this.appointmentService.getAppointmentsByDate(this.selectedDay).subscribe(
       data => {
@@ -148,23 +155,25 @@ export class AppointmentsComponent implements OnInit {
           this.events.push({
             title: app.employee.name,
             resourceId: app.employee.id,
+            backgroundColor: app.user ? '#2da85b': '#969696',
+            borderColor: app.user ? '#2da85b': '#969696',
             extendedProps: {
               id: app.id,
-              client: app.user.name,
+              client: app.user ? app.user.name : "",
               day: formatDateTimeToDay(app.start),
               time: app.time_display,
               timeEnd: app.time_end_display,
-              service: app.services[0].name,
-              ammount: app.services[0].price,
-              duration: formatTimeDuration(app.services[0].duration),
+              service: app.services[0] ? app.services[0].name : "",
+              ammount: app.services[0] ? app.services[0].price : "",
+              duration: app.services[0] ? formatTimeDuration(app.services[0].duration) : "",
               employee: app.employee.name,
+              employeeId: app.employee.id,
               start: app.start
             },
             end: app.end,
             start: app.start
           })
         });
-        console.log(this.events);
 
         this.calendarOptions = {
           initialView: 'resourceTimeGridDay',
@@ -186,7 +195,7 @@ export class AppointmentsComponent implements OnInit {
             },
             customLeft: {
               text: ' < ',
-              click: this.handlePrev.bind(this)  
+              click: this.handlePrev.bind(this)
             },
             customRight: {
               text: ' > ',
@@ -240,7 +249,8 @@ export class AppointmentsComponent implements OnInit {
             this.appointmentDetail.duration = props['duration'];
             this.appointmentDetail.employee = props['employee'];
             this.appointmentDetail.start = props['start'];
-            showModal(modalElement);
+            this.appointmentDetail.employeeId = props['employeeId'];
+            showModal("appointmentDetail");
           },
           resources: this.resources,
           events: this.events
@@ -256,15 +266,40 @@ export class AppointmentsComponent implements OnInit {
     const businessId = 1;
     const data: Employee[] = await firstValueFrom(this.employeeService.getEmployeesByBusiness(businessId));
     return data.map(employee => ({
-          ...employee,
-          "title":employee.name
-        }));
+      ...employee,
+      "title": employee.name
+    }));
 
   }
 
   handleEventDrop(info: any) {
-    console.log(`Evento movido para ${info.event.start} até ${info.event.end}`);
-    // Aqui você pode chamar seu backend para salvar as mudanças no banco de dados
+    const employeeId = info.event._def.resourceIds[0];
+    const event = info.event.extendedProps;
+    this.appointmentService.rescheduleAppointment(event.id, employeeId, info.event.start).subscribe(
+      () => {
+        this.getAppointments();
+        this.successMessage = 'Reagendado com sucesso!';
+        this.showAlert = true;
+        this.getAppointments();
+        this.hideAlertAfterDelay();
+        this.rescheduleError = null;
+        this.typeAlert = 'success'
+      },
+      (error) => {
+        if (error.status === 400 && error.error?.code === '01') {
+          this.rescheduleError = error.error.message;  // Exibe a mensagem de erro vinda do backend
+        } else {
+          // Tratar erros inesperados
+          this.rescheduleError = 'Ocorreu um erro ao tentar reagendar. Tente novamente mais tarde.';
+        }
+        this.getAppointments();
+        this.successMessage = 'Falha ao reagendar!';
+        this.showAlert = true;
+        this.getAppointments();
+        this.hideAlertAfterDelay();
+        this.typeAlert = 'danger'
+      }
+    );
   }
 
   // Manipula quando o evento é redimensionado
@@ -295,26 +330,62 @@ export class AppointmentsComponent implements OnInit {
   }
 
   handleDateClick(arg: any) {
-    const calendarApi = arg.view.calendar; // Obtém a instância do calendário
-    this.showMonth = true;
-    calendarApi.changeView('resourceTimeGridDay', arg.date); // Muda para resourceTimeGridDay com a data clicada
+    this.employeeId = arg.resource.id;
+    this.dateTimeStart = new Date(arg.dateStr);
+    this.dateTimeEnd = new Date(arg.dateStr);
+    this.bookTimeStart = this.dateTimeStart.toTimeString().split(' ')[0].slice(0, 5);
+    this.dateTimeEnd.setMinutes(this.dateTimeEnd.getMinutes() + 15);
+    this.bookTimeEnd = this.dateTimeEnd.toTimeString().split(' ')[0].slice(0, 5);
+    showModal("bookModal");
   }
 
-  hideModal(modalId: string) {
-    const element = document.getElementById(modalId);
-    if (element) {
-      const modal = Modal.getInstance(element);
-      if (modal) {
-        modal.hide();
+
+  bookAppointment() {
+    const dateStartFormated = `${formatDate(this.dateTimeStart)}T${this.bookTimeStart}`;
+    const dateEndFormated = `${formatDate(this.dateTimeEnd)}T${this.bookTimeEnd}`;
+    console.log(dateStartFormated);
+    console.log(dateEndFormated);
+    //const newDateTime = `${newDate}T${newTime}`;
+    this.appointmentService.bookAppointment(this.employeeId.toString(), dateStartFormated, dateEndFormated).subscribe(
+      () => {
+        this.getAppointments();
+        this.successMessage = 'Horário reservado com sucesso!';
+        this.showAlert = true;
+        this.getAppointments();
+        this.hideAlertAfterDelay();
+        hideModal("bookModal");
+        this.rescheduleError = null;
+        this.typeAlert = 'success';
+      },
+      (error) => {
+        console.error('Erro ao reagendar:', error);
+        if (error.status === 400 && error.error?.code === '01') {
+          this.rescheduleError = error.error.message;  // Exibe a mensagem de erro vinda do backend
+        } else {
+          // Tratar erros inesperados
+          this.rescheduleError = 'Ocorreu um erro ao tentar reagendar. Tente novamente mais tarde.';
+        }
       }
+    );
+  }
+
+
+}
+
+function hideModal(modalId: string) {
+  const element = document.getElementById(modalId);
+  if (element) {
+    const modal = Modal.getInstance(element);
+    if (modal) {
+      modal.hide();
     }
   }
 }
-function showModal(element: HTMLElement | null) {
+
+function showModal(modalId: string) {
+  const element = document.getElementById(modalId);
   if (element) {
     const modal = new Modal(element);
-    console.log(modal);
-
     modal.show();
   }
 }
@@ -374,6 +445,15 @@ function formatDateTimeToDay(dateInput: Date | string) {
   return formattedDate;
 };
 
+function formatDate(dateTime: Date) {
+
+  const year = dateTime.getFullYear();
+  const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+  const day = String(dateTime.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
 class AppointmentDetail {
   id!: number;
   client!: string;
@@ -384,5 +464,6 @@ class AppointmentDetail {
   duration!: string;
   employee!: string;
   start!: string;
+  employeeId!: number;
 }
 

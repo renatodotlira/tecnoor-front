@@ -1,6 +1,6 @@
 // src/app/appointment.ts
 
-import { Employee } from "./employee";
+import { Employee } from "../employee/employee";
 import Service from "./service";
 import { User } from "./user";
 

@@ -27,9 +27,9 @@ export class AppointmentMonthService {
         return this.http.put(url, { newDateTime });
     }
 
-    getAppointmentsByMonth(): Observable<AppointmentsByDay[]> {
+    getAppointmentsByMonth(month: number): Observable<AppointmentsByDay[]> {
         console.log("api url: " + this.apiUrl);
-        const url = `${this.apiUrl}/month`;
+        const url = `${this.apiUrl}/month/${month}`;
         return this.http.get<AppointmentsByDay[]>(url);
       }
 

@@ -1,41 +1,47 @@
-<div class="container">
-    <div class="login-form">
-      <h2>Login app</h2>
-      <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            formControlName="email"
-            class="form-control"
-            placeholder="Digite seu email"
-            required
-          />
-          <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-danger">
-            Email é obrigatório.
-          </div>
-        </div>
+<br>
+<div class="container login-container">
+  <h2>Bem vindo</h2>
+  <h6>Informe seus dados de login para continuar</h6>
   
-        <div class="form-group">
-          <label for="password">Senha</label>
-          <input
-            type="password"
-            id="password"
-            formControlName="password"
-            class="form-control"
-            placeholder="Digite sua senha"
-            required
-          />
-          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger">
-            Senha é obrigatória.
-          </div>
-        </div>
-  
-        <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">
-          Login
-        </button>
-      </form>
+  <br>
+  <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
+    <div class="input-group mb-3">
+      <span class="input-group-text">&commat; </span>
+      <div class="form-floating">
+        <input type="text" class="form-control" id="floatingInputGroup1" placeholder="Email">
+        <label for="floatingInputGroup1">Email</label>
+      </div>
     </div>
-  </div>
-  
+
+    <div class="input-group mb-3">
+      <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2M5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1"/>
+      </svg></span>
+      <div class="form-floating">
+        <input type="password" class="form-control" id="password" placeholder="Senha">
+        <label for="floatingInputGroup1">Senha</label>
+      </div>
+      <div class="password-show-field">
+        <i [ngClass]="{'bi-eye': showPassword, 'bi-eye-slash': !showPassword}" id="showPassword" (click)="togglePassword()"></i>
+      </div>
+    </div>
+    <div class="row" style="margin-top: -10px !important;">
+      <div class="col">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+          <label class="form-check-label link-secondary" for="flexSwitchCheckDefault">Lembrar</label>
+        </div>
+      </div>
+      <div class="col position-right" style="text-align: right;">
+        <p><a href="#" class="link-secondary" style="text-decoration: none;">Esqueceu sua senha?</a></p>
+      </div>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary" style="width: 100%;" [disabled]="loginForm.invalid">
+      Login
+    </button>
+    <br><br>
+  </form>
+  <p style="color: gray;">Novo por aqui? <a href="#" style="text-decoration: none; color: #0a53be;">Crie uma conta</a>
+  </p>
+</div>

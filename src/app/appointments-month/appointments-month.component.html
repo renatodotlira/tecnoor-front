@@ -1,10 +1,13 @@
-<full-calendar [options]="calendarOptions" *ngIf="isLoaded">
+<br>
+@if (isLoaded) {
+  <full-calendar [options]="calendarOptions">
     <ng-template #eventContent let-arg>
-        <div style="display: flex; width: 100%; padding-left: 3px; border-radius: 5px;">
-            <div class="event-text">
-                <b>{{ arg.event.title }} </b>-
-                {{arg.event.extendedProps.count}}
-            </div>
+      <div style="display: flex; width: 100%; padding-left: 3px; border-radius: 5px;">
+        <div class="event-text">
+          <b>{{ arg.event.title }} </b>-
+          {{arg.event.extendedProps.count}}
         </div>
+      </div>
     </ng-template>
-</full-calendar>
+  </full-calendar>
+}
