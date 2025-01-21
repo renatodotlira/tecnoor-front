@@ -8,13 +8,21 @@ import { AuthService } from '../auth/auth.service';
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
-export class MenuComponent implements OnInit  {
+export class MenuComponent implements OnInit {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   isLoggedIn!: boolean;
 
-  ngOnInit(){
+  ngOnInit() {
     this.isLoggedIn = this.authService.isLoggedIn();
- }
+    this.authService.loggedIn$.subscribe((status) => {
+      this.isLoggedIn = status;
+    });
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+  }
+
 }

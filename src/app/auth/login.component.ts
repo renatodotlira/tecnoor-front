@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from './auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,12 +11,36 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   loginForm: FormGroup;
   showPassword: boolean = false;
+  typeAlert: string = 'success';
+  successMessage: string = 'Conta criada com sucesso! Para acessar sua conta, efetue o login.';
+  showAlert: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+  }
+
+  ngOnInit(): void {
+    const entries = performance.getEntriesByType('navigation');
+    const navigationEntry = entries[0] as PerformanceNavigationTiming;
+    if (navigationEntry?.type === 'reload') {
+    } else {
+      this.route.paramMap.subscribe(params => {
+        console.log("dentro dos params");
+        if( params.get('action') === "newUser") {
+          this.showAlert = true;
+          this.hideAlertAfterDelay();
+        }
+      });
+    }
+  }
+
+  hideAlertAfterDelay() {
+    setTimeout(() => {
+      this.showAlert = false;
+    }, 4000);
   }
 
   togglePassword() {
@@ -37,7 +61,7 @@ export class LoginComponent {
 
       this.authService.login(email, password).subscribe({
         next: (response) => {
-          this.router.navigate(['/product']);
+          this.router.navigate(['/']);
         },
         error: (err) => {
           console.error('Error on login', err);

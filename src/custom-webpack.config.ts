@@ -7,7 +7,8 @@ export default {
   plugins: [
     new webpack.DefinePlugin({
       APPOINTMENT_URL: JSON.stringify(process.env['APPOINTMENT_URL']),
-      EMPLOYEE_URL: JSON.stringify(process.env['EMPLOYEE_URL'])
+      EMPLOYEE_URL: JSON.stringify(process.env['EMPLOYEE_URL']),
+      USER_URL: JSON.stringify(process.env['USER_URL'])
     }),
   ],
 };

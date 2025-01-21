@@ -12,6 +12,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import { LoginComponent } from './auth/login.component';
 import { MenuComponent } from "./menu/menu.component";
 import { EmployeeComponent } from './employee/employee.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { EmployeeComponent } from './employee/employee.component';
     AppointmentsMonthComponent,
     AlertMessageComponent,
     LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,

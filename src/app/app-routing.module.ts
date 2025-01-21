@@ -4,13 +4,19 @@ import { AppointmentsComponent } from './appointments/appointments.component';
 import { EmployeeComponent } from './employee/employee.component';
 import { AppointmentsMonthComponent } from './appointments-month/appointments-month.component';
 import { LoginComponent } from './auth/login.component';
+import { InvoiceComponent } from './invoice/invoice.component'
 import { AuthGuard } from './auth/auth.guard';
+import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
-  { path: 'month', component: AppointmentsMonthComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'employee', component: EmployeeComponent },
-  { path: '', component: AppointmentsComponent },
+  { path: 'month', component: AppointmentsMonthComponent, canActivate: [ AuthGuard ]},
+  { path: 'login', component: LoginComponent, canActivate: [ AuthGuard ] },
+  { path: 'login/:action', component: LoginComponent, canActivate: [ AuthGuard ] },
+  { path: 'employee', component: EmployeeComponent, canActivate: [ AuthGuard ]},
+  { path: 'invoice', component: InvoiceComponent, canActivate: [ AuthGuard ]},
+  { path: 'register', component: RegisterComponent, canActivate: [ AuthGuard ]},
+  { path: 'register/:action', component: RegisterComponent, canActivate: [ AuthGuard ]},
+  { path: '', component: AppointmentsComponent, canActivate: [ AuthGuard ]},
 ];
 
 @NgModule({

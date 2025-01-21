@@ -1,16 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthResponse } from './authResponse';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  //private apiUrl = environment.authApiUrl;
+  private loggedIn = new BehaviorSubject<boolean>(this.isLoggedIn());
+  loggedIn$ = this.loggedIn.asObservable();
 
-  constructor(private http: HttpClient) { }
+  private apiUrl = USER_URL;
+
+  constructor(private router: Router, private http: HttpClient) { }
 
   login(email: string, password: string): Observable<any> {
     const headers = new HttpHeaders({
@@ -19,14 +23,15 @@ export class AuthService {
     });
 
     const body = {
-      email: email,
+      userName: email,
       password: password,
     };
 
-    return this.http.post<AuthResponse>("", body, { headers }).pipe(
+    return this.http.post<AuthResponse>(this.apiUrl + "/login", body, { headers }).pipe(
       tap((response) => {
         console.log("Sucesso no login!");
         localStorage.setItem('token', response.token);
+        this.loggedIn.next(true);
       }));
   }
 
@@ -36,6 +41,8 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('token');
+    this.loggedIn.next(false);
+    this.router.navigate(['/login']);
   }
 
 }

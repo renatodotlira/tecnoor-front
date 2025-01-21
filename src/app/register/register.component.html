@@ -1,0 +1,80 @@
+<br>
+@if (registering) {
+  <div class="container register-container">
+    <h2 style="color: #2b4766; font-family: Roboto, sans-serif; font-weight: 600;">Registrar conta de acesso</h2>
+    <h6 style="font-family: Roboto, sans-serif; color: rgb(105, 117, 134);">Informe suas credenciais para se registrar na plataforma</h6>
+    <br>
+    <button type="submit" class="btn btn-light" style="width: 100%; border: 1px solid #e6e8eb;">
+      <img src="data:image/svg+xml,%3csvg%20width='22'%20height='22'%20viewBox='0%200%2022%2022'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M5.06129%2013.2253L4.31871%2015.9975L1.60458%2016.0549C0.793457%2014.5504%200.333374%2012.8292%200.333374%2011C0.333374%209.23119%200.763541%207.56319%201.52604%206.09448H1.52662L3.94296%206.53748L5.00146%208.93932C4.77992%209.58519%204.65917%2010.2785%204.65917%2011C4.65925%2011.783%204.80108%2012.5332%205.06129%2013.2253Z'%20fill='%23FBBB00'/%3e%3cpath%20d='M21.4804%209.00732C21.6029%209.65257%2021.6668%2010.3189%2021.6668%2011C21.6668%2011.7637%2021.5865%2012.5086%2021.4335%2013.2271C20.9143%2015.6722%2019.5575%2017.8073%2017.678%2019.3182L17.6774%2019.3177L14.6339%2019.1624L14.2031%2016.4734C15.4503%2015.742%2016.425%2014.5974%2016.9384%2013.2271H11.2346V9.00732H17.0216H21.4804Z'%20fill='%23518EF8'/%3e%3cpath%20d='M17.6772%2019.3176L17.6777%2019.3182C15.8498%2020.7875%2013.5277%2021.6666%2011%2021.6666C6.93783%2021.6666%203.40612%2019.3962%201.60449%2016.0549L5.0612%2013.2253C5.96199%2015.6294%208.28112%2017.3408%2011%2017.3408C12.1686%2017.3408%2013.2634%2017.0249%2014.2029%2016.4734L17.6772%2019.3176Z'%20fill='%2328B446'/%3e%3cpath%20d='M17.8085%202.78892L14.353%205.61792C13.3807%205.01017%2012.2313%204.65908%2011%204.65908C8.21963%204.65908%205.85713%206.44896%205.00146%208.93925L1.52658%206.09442H1.526C3.30125%202.67171%206.8775%200.333252%2011%200.333252C13.5881%200.333252%2015.9612%201.25517%2017.8085%202.78892Z'%20fill='%23F14336'/%3e%3c/svg%3e"
+      alt="google" width="16" height="16" style="margin-right: 5px; margin-top: -3px;">
+      Registrar com Google
+    </button>
+    <br><br>
+    <hr>
+    <div class="container" style="background-color: white; width: 105px; position: relative; top:-35px;">
+      <button class="btn btn-light"  disabled style="width: 80px; border: 1px solid #e6e8eb; border-radius: 20px;"> OU </button>
+    </div>
+    <h6 style="font-family: Roboto, sans-serif; color: rgb(105, 117, 134);">Registrar com seu email</h6>
+
+    <form (ngSubmit)="onSubmit()" [formGroup]="registerForm">
+      <div class="input-group mb-3">
+        <span class="input-group-text">&commat; </span>
+        <div class="form-floating">
+          <input type="text" class="form-control" formControlName="email" id="email" placeholder="Email">
+          <label for="floatingInputGroup1">Email</label>
+        </div>
+      </div>
+
+      <div class="input-group mb-3">
+        <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+          <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2M5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1"/>
+        </svg></span>
+        <div class="form-floating">
+          <input type="password" class="form-control" formControlName="password" id="password" placeholder="Senha">
+          <label for="floatingInputGroup1">Senha</label>
+        </div>
+        <div class="password-show-field">
+          <i [ngClass]="{'bi-eye': showPassword, 'bi-eye-slash': !showPassword}" id="showPassword" (click)="togglePassword()"></i>
+        </div>
+      </div>
+      <br>
+      <button type="submit" class="btn btn-primary" style="width: 100%;" [disabled]="registerForm.invalid">
+        Criar conta
+      </button>
+      <br><br>
+    </form>
+    <p style="color: gray;">Já possui uma conta? <a href="#" style="text-decoration: none; color: #0a53be;">Acessar conta</a>
+    </p>
+  </div>
+}
+@if (waitingConfirmation) {
+  <div class="container register-container">
+    <h2 style="color: #2b4766; font-family: Roboto, sans-serif; font-weight: 600;">Confirmação de email</h2>
+    <br>
+    <h6 style="font-family: Roboto, sans-serif; color: rgb(105, 117, 134);">
+      Verifique sua caixa de entrada, enviamos um email de confirmação para aumentar a segurança da sua conta.
+      Para confirmar, clique no botão "confirmar" no email enviado para:
+    </h6>
+    <br>
+    <hr>
+    <div class="container" style="background-color: white; width: 420px; position: relative; top:-35px;">
+      <button class="btn btn-light"  disabled style="width: 400px; border: 1px solid #e6e8eb; border-radius: 20px;"> {{email}} </button>
+    </div>
+    <p style="color: gray;">Não recebeu o email? <a href="#" style="text-decoration: none; color: #0a53be;">Enviar novamente</a>
+    </p>
+    <p style="color: gray;">Já confirmou o email? <a href="/login" style="text-decoration: none; color: #0a53be;">Ir para login</a>
+    </p>
+  </div>
+}
+@if (confirmed) {
+  <div class="container register-container">
+    <h2 style="color: #2b4766; font-family: Roboto, sans-serif; font-weight: 600;">Confirmação de email</h2>
+    <br>
+    <h6 style="font-family: Roboto, sans-serif; color: rgb(105, 117, 134);">
+      Obrigado por confirmar seu email, agora sua conta está mais segura.
+    </h6>
+    <hr>
+    <p style="color: gray;"><a href="/login" style="text-decoration: none; color: #0a53be;">Ir para login</a>
+    </p>
+  </div>
+}
